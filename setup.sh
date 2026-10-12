@@ -49,7 +49,7 @@ git commit -q -m "Каркас проекта из genealogy-template, $TODAY"
 echo "Создано: $DST"
 echo
 echo "Дальше руками:"
-echo "  1) приватный репозиторий на GitHub и первая отправка:"
+echo "  1) по желанию — приватный репозиторий на GitHub (без него проект живёт локально):"
 echo "     gh repo create genealogy-$SLUG --private --source \"$DST\" --remote origin --push"
 echo "  2) проверить, что хук автосохранения в ~/.claude/settings.json ловит папку:"
 echo "     grep -c 'work/genealogy\\*' ~/.claude/settings.json   # должно быть 1"

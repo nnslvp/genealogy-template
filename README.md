@@ -8,9 +8,11 @@
 ## Что нужно
 - macOS или Linux, `git`, `python3`, `jq` (`brew install jq`).
 - [Claude Code](https://claude.com/claude-code) в терминале: `npm install -g @anthropic-ai/claude-code`.
-- Аккаунт на GitHub и `gh` (`brew install gh && gh auth login`) — для приватной резервной копии.
+- По желанию: аккаунт на GitHub и `gh` — для приватной резервной копии. Без него проект живёт локально в git.
 
 ## Как начать: пять шагов
+Самый простой путь — вставить в Claude Code текст из `START_PROMPT.md`: он сделает шаги 1–4 сам.
+
 ```bash
 # 1. Взять шаблон
 git clone https://github.com/nnslvp/genealogy-template.git ~/work/genealogy-template
@@ -19,8 +21,8 @@ git clone https://github.com/nnslvp/genealogy-template.git ~/work/genealogy-temp
 ~/work/genealogy-template/setup.sh anna "Анна" "Анны"
 #    → появится ~/work/genealogy-anna с подставленным именем и первым коммитом
 
-# 3. Приватная копия на GitHub (команду скрипт напечатает сам)
-gh repo create genealogy-anna --private --source ~/work/genealogy-anna --remote origin --push
+# 3. По желанию: приватная копия на GitHub (команду скрипт напечатает сам)
+# gh repo create genealogy-anna --private --source ~/work/genealogy-anna --remote origin --push
 
 # 4. Хук автосохранения — один раз, см. VERSIONING.md, раздел «Хук автосохранения»
 
