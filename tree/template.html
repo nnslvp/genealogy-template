@@ -1,0 +1,169 @@
+<meta charset="utf-8">
+<title>Дерево __FAMILY__</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Spectral:ital,wght@0,400;0,600;1,400&family=IBM+Plex+Sans:wght@400;500;600&display=swap">
+<style>
+:root{--bg:#EDEFEA;--paper:#F7F8F5;--ink:#1E2420;--muted:#5C645D;--line:#C9CFC6;--acc:#2F5D4A;--acc-soft:#DCE8E0;--amber:#B7791F;--amber-soft:#F3E7D0;--hyp:#5F6B8A;--hyp-soft:#E3E6EE;--red:#9B3D2E;--focus:#2F5D4A}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){--bg:#171B18;--paper:#20261F;--ink:#E7EAE3;--muted:#A3AAA2;--line:#3A423A;--acc:#7FB89E;--acc-soft:#25382E;--amber:#D9A24A;--amber-soft:#3A2F1A;--hyp:#A2ACC9;--hyp-soft:#2A2F3E;--red:#D98673;--focus:#7FB89E}}
+:root[data-theme="dark"]{--bg:#171B18;--paper:#20261F;--ink:#E7EAE3;--muted:#A3AAA2;--line:#3A423A;--acc:#7FB89E;--acc-soft:#25382E;--amber:#D9A24A;--amber-soft:#3A2F1A;--hyp:#A2ACC9;--hyp-soft:#2A2F3E;--red:#D98673;--focus:#7FB89E}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"IBM Plex Sans",system-ui,-apple-system,Segoe UI,Arial,sans-serif;font-size:14px;line-height:1.45}
+header{padding:28px 32px 12px;display:flex;flex-wrap:wrap;gap:16px 32px;align-items:flex-end;justify-content:space-between}
+h1{font-family:Spectral,Georgia,serif;font-weight:600;font-size:30px;margin:0;letter-spacing:-.01em;text-wrap:balance}
+.sub{color:var(--muted);max-width:62ch;margin:6px 0 0}
+.legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:var(--muted)}
+.legend span{display:inline-flex;align-items:center;gap:6px}
+.sw{width:14px;height:14px;border-radius:3px;border:2px solid var(--acc);background:var(--paper)}
+.sw.y{border-color:var(--amber)} .sw.h{border-style:dashed;border-color:var(--hyp)}
+.tools{padding:0 32px 8px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+input[type=search]{font:inherit;padding:8px 12px;border:1px solid var(--line);border-radius:6px;background:var(--paper);color:var(--ink);min-width:260px}
+input[type=search]:focus{outline:2px solid var(--focus);outline-offset:1px}
+.count{color:var(--muted);font-size:12px}
+section{padding:8px 32px 24px}
+h2{font-family:Spectral,Georgia,serif;font-weight:600;font-size:20px;margin:18px 0 10px}
+.eyebrow{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 4px}
+/* pedigree */
+.pedwrap{overflow-x:auto;padding-bottom:8px}
+.ped{position:relative;display:grid;grid-template-columns:repeat(6,minmax(200px,1fr));gap:0 28px;min-width:1400px;align-items:stretch}
+.gen{display:flex;flex-direction:column;justify-content:space-around;gap:6px}
+.gen h3{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted);margin:0 0 4px;font-weight:600;position:sticky;top:0}
+.slot{display:flex;flex-direction:column;justify-content:center;flex:1}
+.box{position:relative;background:var(--paper);border:2px solid var(--acc);border-radius:6px;padding:8px 10px;cursor:pointer;min-height:64px}
+.box.y{border-color:var(--amber)} .box.h{border-style:dashed;border-color:var(--hyp)} .box.empty{border-style:dotted;border-color:var(--line);color:var(--muted);cursor:default;background:transparent}
+.box .n{font-family:Spectral,Georgia,serif;font-size:15px;font-weight:600;line-height:1.2}
+.box .d{color:var(--muted);font-size:12px;margin-top:3px;font-variant-numeric:tabular-nums}
+.box .pill{position:absolute;top:-9px;right:8px;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:1px 6px;border-radius:9px;background:var(--acc-soft);color:var(--acc);font-weight:600}
+.box.y .pill{background:var(--amber-soft);color:var(--amber)} .box.h .pill{background:var(--hyp-soft);color:var(--hyp)}
+.box:focus-visible{outline:2px solid var(--focus);outline-offset:2px}
+.box.hit{box-shadow:0 0 0 3px var(--amber-soft)}
+svg.links{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+svg.links path{fill:none;stroke:var(--line);stroke-width:1.5}
+svg.links path.h{stroke-dasharray:4 4;stroke:var(--hyp)}
+/* detail panel */
+.panel{position:fixed;right:0;top:0;bottom:0;width:min(420px,92vw);background:var(--paper);border-left:1px solid var(--line);padding:22px 24px;overflow:auto;transform:translateX(105%);transition:transform .2s;box-shadow:-8px 0 24px rgba(0,0,0,.08);z-index:5}
+.panel.open{transform:none}
+@media (prefers-reduced-motion:reduce){.panel{transition:none}}
+.panel h3{font-family:Spectral,Georgia,serif;font-size:22px;margin:4px 0 2px;font-weight:600;text-wrap:balance}
+.panel .close{position:absolute;top:12px;right:14px;border:0;background:transparent;font:inherit;font-size:22px;cursor:pointer;color:var(--muted)}
+.panel .close:focus-visible{outline:2px solid var(--focus)}
+.kv{display:grid;grid-template-columns:110px 1fr;gap:4px 12px;margin:12px 0;font-size:13px}
+.kv dt{color:var(--muted)} .kv dd{margin:0}
+.rel a{color:var(--acc);text-decoration:none;border-bottom:1px dotted var(--acc);cursor:pointer}
+.rel ul{margin:2px 0 8px;padding-left:18px}
+/* families */
+.fams{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:14px}
+.fam{background:var(--paper);border:1px solid var(--line);border-radius:6px;padding:12px 14px}
+.fam .couple{font-family:Spectral,Georgia,serif;font-size:15px;font-weight:600;line-height:1.3}
+.fam .couple .p{cursor:pointer;border-bottom:1px dotted transparent}
+.fam .couple .p:hover{border-bottom-color:var(--acc)}
+.fam .place{color:var(--muted);font-size:12px;margin:2px 0 6px}
+.fam ol{margin:0;padding-left:18px;font-size:13px}
+.fam li{margin:2px 0;cursor:pointer}
+.fam li .yrs{color:var(--muted);font-variant-numeric:tabular-nums}
+.tag{display:inline-block;font-size:10px;letter-spacing:.08em;text-transform:uppercase;padding:1px 6px;border-radius:9px;background:var(--acc-soft);color:var(--acc);font-weight:600;margin-left:6px;vertical-align:middle}
+.tag.y{background:var(--amber-soft);color:var(--amber)} .tag.h{background:var(--hyp-soft);color:var(--hyp)}
+
+.chains{display:flex;flex-direction:column;gap:6px;max-width:100%;overflow-x:auto}
+.chain{display:flex;align-items:center;flex-wrap:nowrap;gap:0;font-size:13px;white-space:nowrap;padding:4px 0}
+.chain .lbl{font-family:'Spectral',Georgia,serif;font-weight:600;min-width:150px;color:var(--acc);white-space:normal;line-height:1.2;padding-right:8px}
+.chain .st{display:inline-block;padding:2px 8px;border:1px solid var(--line);border-radius:12px;cursor:pointer;background:var(--card)}
+.chain .st.y{border-color:var(--amber)} .chain .st.h{border-style:dashed}
+.chain .st:hover{background:var(--acc-soft)}
+.chain .arr{color:var(--muted);padding:0 4px}
+.chain .yr{color:var(--muted);font-size:11px;margin-left:4px;font-variant-numeric:tabular-nums}
+footer{padding:10px 32px 30px;color:var(--muted);font-size:12px;max-width:80ch}
+</style>
+<header>
+  <div><p class="eyebrow">__PLACES__</p><h1>Дерево __FAMILY__</h1>
+  <p class="sub">__COUNT__ из карточек репозитория на __DATE__. Слева __ROOTNAME__, вправо поколения до прапрапрадедов; ниже — все линии вглубь. Нажми на любого, чтобы увидеть родню и источник.</p></div>
+  <div class="legend"><span><i class="sw"></i>подтверждено документом</span><span><i class="sw y"></i>со слов родни или из чужого дерева</span><span><i class="sw h"></i>гипотеза</span></div>
+</header>
+<div class="tools"><input type="search" id="q" placeholder="Найти по имени, деревне, году…" aria-label="Поиск"><span class="count" id="cnt"></span></div>
+<section>
+  <p class="eyebrow">Прямые предки</p>
+  <div class="pedwrap"><div class="ped" id="ped"><svg class="links" id="links"></svg></div></div>
+</section>
+<section>
+  <h2>Линии предков вглубь</h2>
+  <p class="sub" style="margin:4px 0 10px">Каждая строка — цепочка от __ROOTNAME__ к самому дальнему известному предку.</p>
+  <div id="chains" class="chains"></div>
+</section>
+<section>
+  <h2>Семьи по линиям</h2>
+  <p class="eyebrow" style="margin-top:10px">Папина линия</p><div class="fams" id="famP"></div>
+  <p class="eyebrow" style="margin-top:18px">Мамина линия</p><div class="fams" id="famM"></div>
+  <p class="eyebrow" style="margin-top:18px">Кровная боковая родня: потомки наших предков</p><div class="fams" id="famB"></div>
+  <p class="eyebrow" style="margin-top:18px">Гнёзда наших деревень из чужих деревьев и баз, прямая связь не доказана</p><div class="fams" id="famH"></div>
+</section>
+<aside class="panel" id="panel" aria-live="polite"><button class="close" id="close" aria-label="Закрыть">×</button><div id="pbody"></div></aside>
+<footer>GEDCOM-версия этого дерева лежит в репозитории: tree/__GED__ (для MyHeritage и GEDmatch). Статус у каждого человека совпадает с его карточкой в persons/.</footer>
+<script>
+const DATA=__DATA__;
+const P=DATA.persons, F=DATA.families, HYP=new Set(DATA.hyp.map(x=>x.join('|')));
+const parentsOf={}, spousesOf={}, childrenOf={};
+F.forEach((f,i)=>{f.ch.forEach(c=>{parentsOf[c]={f:f.h,m:f.w}});if(f.h){spousesOf[f.h]=spousesOf[f.h]||[];if(f.w)spousesOf[f.h].push(f.w);childrenOf[f.h]=(childrenOf[f.h]||[]).concat(f.ch)}if(f.w){spousesOf[f.w]=spousesOf[f.w]||[];if(f.h)spousesOf[f.w].push(f.h);childrenOf[f.w]=(childrenOf[f.w]||[]).concat(f.ch)}});
+const yrs=p=>[p.birth,p.death].filter(Boolean).join(' – ');
+const STL={v:'документ',y:'со слов',h:'гипотеза'};
+// pedigree: slots by generation, binary
+const GEN=[DATA.rootName,'Родители','Деды и бабушки','Прадеды и прабабушки','Прапрадеды','Прапрапрадеды'];
+const EMPTY=DATA.empty||{};
+const root=DATA.root;
+const slots=[[root]];
+for(let g=1;g<6;g++){const prev=slots[g-1];const cur=[];prev.forEach(id=>{const pr=id?parentsOf[id]:null;cur.push(pr&&pr.f?pr.f:(id?('?'+id+':f'):null));cur.push(pr&&pr.m?pr.m:(id?('?'+id+':m'):null))});slots.push(cur)}
+const ped=document.getElementById('ped');
+const boxEls={};
+slots.forEach((col,g)=>{const gd=document.createElement('div');gd.className='gen';gd.innerHTML='<h3>'+GEN[g]+'</h3>';
+ col.forEach((id,i)=>{const s=document.createElement('div');s.className='slot';s.dataset.g=g;s.dataset.i=i;
+  if(id&&!id.startsWith('?')){const p=P[id];const b=document.createElement('div');b.className='box '+p.st;b.tabIndex=0;b.dataset.id=id;
+   b.innerHTML='<span class="pill">'+STL[p.st]+'</span><div class="n">'+p.name+'</div><div class="d">'+[yrs(p),p.place].filter(Boolean).join(' · ')+'</div>';
+   b.addEventListener('click',()=>show(id));b.addEventListener('keydown',e=>{if(e.key==='Enter')show(id)});s.appendChild(b);boxEls[g+':'+i]=b}
+  else if(id){const key=id.slice(1);const b=document.createElement('div');b.className='box empty';const t=EMPTY[key];b.innerHTML='<div class="d">'+(t||'неизвестен')+'</div>';if(!t){b.style.visibility='hidden'}s.appendChild(b);if(t)boxEls[g+':'+i]=b}
+  gd.appendChild(s)});ped.appendChild(gd)});
+function drawLinks(){const svg=document.getElementById('links');const R=ped.getBoundingClientRect();svg.setAttribute('viewBox','0 0 '+R.width+' '+R.height);svg.innerHTML='';
+ for(let g=0;g<5;g++){slots[g].forEach((id,i)=>{if(!id||id.startsWith('?'))return;const c=boxEls[g+':'+i];if(!c)return;const cr=c.getBoundingClientRect();
+  [0,1].forEach(k=>{const pid=slots[g+1][2*i+k];if(!pid||pid.startsWith('?'))return;const pb=boxEls[(g+1)+':'+(2*i+k)];if(!pb)return;const pr=pb.getBoundingClientRect();
+   const x1=cr.right-R.left,y1=cr.top+cr.height/2-R.top,x2=pr.left-R.left,y2=pr.top+pr.height/2-R.top,mx=x1+(x2-x1)/2;
+   const path=document.createElementNS('http://www.w3.org/2000/svg','path');path.setAttribute('d',`M${x1},${y1} H${mx} V${y2} H${x2}`);if(HYP.has(pid+'|'+id))path.classList.add('h');svg.appendChild(path)})})}}
+drawLinks();addEventListener('resize',drawLinks);document.fonts&&document.fonts.ready.then(drawLinks);
+// families
+const LINE_P=new Set(DATA.lineP||[]);
+const LINE_M=new Set(DATA.lineM||[]);
+function famCard(f){const h=f.h?P[f.h]:null,w=f.w?P[f.w]:null;const d=document.createElement('div');d.className='fam';
+ const cp=[h,w].filter(Boolean).map(p=>'<span class="p" data-id="'+p.id+'">'+p.name+'</span><span class="tag '+p.st+'">'+STL[p.st]+'</span>').join('<br>');
+ const place=[h&&h.place,w&&w.place].filter(Boolean).filter((v,i,a)=>a.indexOf(v)===i).join(' / ');
+ d.innerHTML='<div class="couple">'+cp+'</div><div class="place">'+(place||'')+'</div>'+(f.ch.length?'<ol>'+f.ch.map(c=>'<li data-id="'+c+'">'+P[c].name+' <span class="yrs">'+yrs(P[c])+'</span></li>').join('')+'</ol>':'<div class="place">дети не записаны</div>');
+ d.querySelectorAll('[data-id]').forEach(el=>el.addEventListener('click',()=>show(el.dataset.id)));return d}
+// предки заявителя (с линией) и кровная боковая родня — считаем из данных
+const ANC={};(function(){const q=[];const pr0=parentsOf[root]||{};if(pr0.f){ANC[pr0.f]='папина';q.push(pr0.f)}if(pr0.m){ANC[pr0.m]='мамина';q.push(pr0.m)}
+ while(q.length){const id=q.shift();const pr=parentsOf[id]||{};[pr.f,pr.m].forEach(x=>{if(x&&!ANC[x]){ANC[x]=ANC[id];q.push(x)}})}})();
+const BLOOD=new Set();(function(){const q=Object.keys(ANC);while(q.length){const id=q.shift();(childrenOf[id]||[]).forEach(c=>{if(!BLOOD.has(c)&&!ANC[c]){BLOOD.add(c);q.push(c)}})}})();
+const sur=id=>P[id].name.split(' ')[0];
+const byName=(a,b)=>{const ka=(a.h?sur(a.h):sur(a.w))+(a.h&&P[a.h].birth||a.w&&P[a.w].birth||'9999');const kb=(b.h?sur(b.h):sur(b.w))+(b.h&&P[b.h].birth||b.w&&P[b.w].birth||'9999');return ka<kb?-1:ka>kb?1:0};
+const groups={famP:[],famM:[],famB:[],famH:[]};
+F.forEach(f=>{const ln=(f.h&&ANC[f.h])||(f.w&&ANC[f.w]);let t;if(ln)t=ln==='папина'?'famP':'famM';else if((f.h&&BLOOD.has(f.h))||(f.w&&BLOOD.has(f.w)))t='famB';else{const k=f.h||f.w;t=LINE_P.has(k)?'famP':LINE_M.has(k)?'famM':'famH'}groups[t].push(f)});
+groups.famB.sort(byName);groups.famH.sort(byName);
+Object.keys(groups).forEach(t=>groups[t].forEach(f=>document.getElementById(t).appendChild(famCard(f))));
+// цепочки предков вглубь: от заявителя к каждому предку без известных родителей
+(function(){const box=document.getElementById('chains');const paths=[];
+ function walk(id,path){const pr=parentsOf[id]||{};const ps=[pr.f,pr.m].filter(Boolean);if(!ps.length){paths.push(path);return}ps.forEach(x=>walk(x,path.concat(x)))}
+ walk(root,[root]);
+ paths.sort((a,b)=>b.length-a.length);
+ paths.forEach(path=>{if(path.length<4)return;const top=P[path[path.length-1]];const d=document.createElement('div');d.className='chain';
+  d.innerHTML='<span class="lbl">'+top.name.split(' ')[0]+' · '+(ANC[path[1]]||'')+' · '+(path.length-1)+' покол.</span>'+path.map((id,i)=>{const p=P[id];const y=(p.birth||'').match(/\d{4}/);return (i?'<span class="arr">→</span>':'')+'<span class="st '+p.st+'" data-id="'+id+'">'+p.name.replace(/\s*\([^)]*\)/,'').split(' ').slice(0,2).join(' ')+(y?'<span class="yr">'+y[0]+'</span>':'')+'</span>'}).join('');
+  d.querySelectorAll('[data-id]').forEach(el=>el.addEventListener('click',()=>show(el.dataset.id)));box.appendChild(d)})})();
+// panel
+const panel=document.getElementById('panel'),pbody=document.getElementById('pbody');
+document.getElementById('close').addEventListener('click',()=>panel.classList.remove('open'));
+function link(id){return '<a data-id="'+id+'">'+P[id].name+'</a>'}
+function show(id){const p=P[id];const pr=parentsOf[id]||{};const sib=(pr.f&&childrenOf[pr.f]||pr.m&&childrenOf[pr.m]||[]).filter(x=>x!==id);
+ const relTxt=ANC[id]?('прямой предок '+DATA.rootGen+' · '+ANC[id]+' линия'):(BLOOD.has(id)?'кровная боковая родня '+DATA.rootGen:'');
+ pbody.innerHTML='<p class="eyebrow">'+STL[p.st]+(p.card?' · persons/'+id+'.md':'')+'</p><h3>'+p.name+'</h3>'+(relTxt?'<p class="eyebrow" style="color:var(--acc)">'+relTxt+'</p>':'')+'<dl class="kv">'+(p.birth?'<dt>Рождение</dt><dd>'+p.birth+(p.place?', '+p.place:'')+'</dd>':(p.place?'<dt>Место</dt><dd>'+p.place+'</dd>':''))+(p.death?'<dt>Смерть</dt><dd>'+p.death+'</dd>':'')+(p.note?'<dt>Заметка</dt><dd>'+p.note+'</dd>':'')+'</dl><div class="rel">'
+ +(pr.f||pr.m?'<p class="eyebrow">Родители</p><ul>'+[pr.f,pr.m].filter(Boolean).map(x=>'<li>'+link(x)+'</li>').join('')+'</ul>':'')
+ +((spousesOf[id]||[]).length?'<p class="eyebrow">Супруг(а)</p><ul>'+spousesOf[id].map(x=>'<li>'+link(x)+'</li>').join('')+'</ul>':'')
+ +((childrenOf[id]||[]).length?'<p class="eyebrow">Дети</p><ul>'+childrenOf[id].map(x=>'<li>'+link(x)+'</li>').join('')+'</ul>':'')
+ +(sib.length?'<p class="eyebrow">Братья и сёстры</p><ul>'+sib.map(x=>'<li>'+link(x)+'</li>').join('')+'</ul>':'')+'</div>';
+ pbody.querySelectorAll('a[data-id]').forEach(a=>a.addEventListener('click',()=>show(a.dataset.id)));panel.classList.add('open')}
+// search
+const q=document.getElementById('q'),cnt=document.getElementById('cnt');
+q.addEventListener('input',()=>{const v=q.value.trim().toLowerCase();let n=0;document.querySelectorAll('.box[data-id],.fam li[data-id],.fam .p[data-id]').forEach(el=>{const p=P[el.dataset.id];const hit=v&&(p.name+' '+p.place+' '+p.birth+' '+p.death+' '+p.note).toLowerCase().includes(v);el.classList.toggle('hit',!!hit);if(hit&&el.classList.contains('box'))n++});
+ const ids=v?Object.values(P).filter(p=>(p.name+' '+p.place+' '+p.birth+' '+p.death+' '+p.note).toLowerCase().includes(v)):[];cnt.textContent=v?('найдено: '+ids.length+(ids.length===1?' — '+ids[0].name:'')):'';if(ids.length===1)show(ids[0].id)});
+</script>

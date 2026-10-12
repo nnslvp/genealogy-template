@@ -1,0 +1,17 @@
+# системный мусор macOS
+.DS_Store
+._*
+Thumbs.db
+
+# сырые данные ДНК: большие и чувствительные, версионировать не стоит
+# если понадобится, снимите эти строки
+docs/dna/*.csv
+docs/dna/*.txt
+docs/dna/*.zip
+docs/dna/*.ged
+
+# временные файлы
+*.tmp
+*~
+docs/dna/MyHeritage_*.zip
+__pycache__/

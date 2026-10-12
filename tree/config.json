@@ -1,0 +1,11 @@
+{
+  "root": "familiya-imya-otchestvo-god",
+  "root_name": "{{NAME}}",
+  "root_name_gen": "{{NAME_GEN}}",
+  "family": "{{NAME}}",
+  "places": "деревни семьи через ·",
+  "ged": "family-{{SLUG}}.ged",
+  "lineP": [],
+  "lineM": [],
+  "empty": {}
+}
